@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 
 import { randomApi } from "shared/api";
 import {User} from "./types";
-import { GetUsersParams } from "../../../shared/api/random-api/users";
+import {GetUsersPaginatedParams, GetUsersParams} from "../../../shared/api/random-api/users";
 import {mapUsers} from "../lib/mapUser";
 
 export const initialState: {
@@ -45,9 +45,10 @@ export const userModel = createSlice({
                 user.isRated = true;
             }
         },
-        unRateUser: (state, { payload }: PayloadAction<{ id: number }>) => {
+        resetUserRating: (state, { payload }: PayloadAction<{ id: number }>) => {
             const user = state.data.find((el) => el.id === payload.id);
             if (user) {
+                user.rating = 0;
                 user.isRated = false;
             }
         }
@@ -62,19 +63,47 @@ export const getUserEntries = createAction('users:getUserEntries', function prep
     }
 })
 
-export const { setUsersList, loadMoreUsers, updateUserRate, unRateUser, setUsersAreFetching } = userModel.actions;
+export const getMoreUsers = createAction('users:getMoreUsers', function prepare(parameters: Omit<GetUsersPaginatedParams, 'page'>) {
+    return {
+        payload: {
+            parameters
+        }
+    }
+})
+
+export const { setUsersList, loadMoreUsers, updateUserRate, resetUserRating, setUsersAreFetching } = userModel.actions;
 
 // epics
 
 const getUsersListAsyncObservable: Epic = (action$: Observable<PayloadAction<GetUsersParams>>, state: StateObservable<RootState>) => {
     return action$.pipe(
         ofType(getUserEntries.type),
-        filter(() => state.value.users.data.length === 0),
-        switchMap(({ payload: { parameters: { size } } }) => {
-            return from(randomApi.users.getUsers({ size }))
+        filter(({ payload: { parameters: { overwrite }} }) => state.value.users.data.length === 0 || !!overwrite),
+        switchMap(({ payload: { parameters: { size, overwrite } } }) => {
+            return from(randomApi.users.getUsers({ size, overwrite }))
                 .pipe(
                     concatMap(({ data }) => {
                         return of(userModel.actions.setUsersList(mapUsers(data)));
+                    }),
+                    catchError(error => of({
+                        type: 'FETCH_USER_REJECTED',
+                        payload: error.xhr.response,
+                        error: true
+                    })),
+                    startWith(userModel.actions.setUsersAreFetching(true))
+                )
+        })
+    );
+};
+
+const getMoreUsersObservable: Epic = (action$: Observable<PayloadAction<GetUsersPaginatedParams>>, state$: StateObservable<RootState>) => {
+    return action$.pipe(
+        ofType(getMoreUsers.type),
+        switchMap(({ payload: { parameters: { size } } }) => {
+            return from(randomApi.users.getUsersPaginated({ size, page: state$.value.users.pages + 1 }))
+                .pipe(
+                    concatMap(({ data }) => {
+                        return of(userModel.actions.loadMoreUsers(mapUsers(data)));
                     }),
                     catchError(error => of({
                         type: 'FETCH_USER_REJECTED',
@@ -135,4 +164,4 @@ export const useIsUserListEmpty = (): boolean =>
     );
 
 export const reducer = userModel.reducer;
-export const epics = [getUsersListAsyncObservable];
+export const epics = [getUsersListAsyncObservable, getMoreUsersObservable];

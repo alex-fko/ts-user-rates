@@ -5,7 +5,8 @@ import type { UserDto } from "./types";
 const BASE_URL = "/users"
 
 export type GetUsersParams = {
-    size: number;
+    size?: number;
+    overwrite: boolean;
 };
 
 export type GetUsersPaginatedParams = {
