@@ -1,7 +1,7 @@
-import {createBrowserRouter, Link} from "react-router-dom";
+import {createHashRouter, Link} from "react-router-dom";
 import {baseLayout} from "app/layouts/baseLayout";
 
-export const appRouter = createBrowserRouter([
+export const appRouter = createHashRouter([
     {
         element: baseLayout,
         errorElement: <div>error</div>,
