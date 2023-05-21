@@ -1,13 +1,36 @@
 import styles from './styles.module.scss';
 import {isRouteErrorResponse, useRouteError } from "react-router-dom";
-import {Grid} from "@mui/material";
+import { CircularProgress, Grid} from "@mui/material";
+import {useDispatch} from "react-redux";
+import {userModel, UserRow} from "entities/user";
+import {ReactNode, useEffect} from "react";
+import {getUserEntries} from "../../entities/user/model";
 
 export function Component() {
+    const dispatch = useDispatch();
+    const isFetching = userModel.useIsUsersListLoading();
+    // const isEmpty = userModel.useIsUserListEmpty();
+    const unratedUsers = userModel.useUnratedUsers();
+    // const ratedUsers = userModel.useRatedUsers();
+
+    useEffect(() => {
+      dispatch(getUserEntries({ size: 3 }));
+    }, [dispatch])
+
+    let unrated: null | ReactNode;
+    if (!isFetching) {
+        unrated = unratedUsers.map((user) => {
+            return <UserRow key={user.id} user={user} after={null} />
+        })
+    } else {
+        unrated = <CircularProgress color={'primary'} size="large"></CircularProgress>;
+    }
+
     return (
         <main className={styles.main}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} className={styles.container}>
                 <Grid className={styles.card} sm={12} md={6}>
-                    xs=12
+                    { unrated }
                 </Grid>
                 <Grid className={styles.card} sm={12} md={6}>
                     xs=12

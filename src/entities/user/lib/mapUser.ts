@@ -9,7 +9,7 @@ export function mapUser(dto: UserDto): User {
         birthDate: dto.date_of_birth,
         uid: dto.uid,
         username: dto.username,
-        avatar: dto.avatar[0],
+        avatar: dto.avatar,
         rating: 0,
         isRated: false
     }

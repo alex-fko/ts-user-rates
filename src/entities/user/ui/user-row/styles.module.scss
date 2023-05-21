@@ -1,3 +1,19 @@
-.user-row {
+.userRow {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background: #c5c5c5;
+  margin: 5px;
+  &:hover {
+    background: #d7d7d7;
+  }
+}
 
+.userRowImage {
+  max-width: 50px;
+  max-height: 50px;
+}
+
+.userInfo {
+  display: inline-block;
 }

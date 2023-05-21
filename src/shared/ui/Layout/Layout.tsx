@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { Outlet, ScrollRestoration } from 'react-router-dom'
 import css from './Layout.module.scss'
+import {Link} from "@mui/material";
 
 type Props = {
     navbarSlot?: ReactNode
@@ -25,9 +26,9 @@ export function Layout(props: Props) {
             <footer className={css.footer}>
                 <div className="text_sm">
                     {new Date().getFullYear()}, see source code on{' '}
-                    <a href="https://github.com/alex-fko/ts-user-rates">
+                    <Link href="https://github.com/alex-fko/ts-user-rates">
                         github.com/alex-fko/ts-user-rates
-                    </a>
+                    </Link>
                 </div>
             </footer>
             {props.bottomSlot}

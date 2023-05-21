@@ -1,35 +1,42 @@
 import {
+    createAction,
     createSelector,
     createSlice,
-    Dispatch,
     PayloadAction,
 } from "@reduxjs/toolkit";
+import { Observable, switchMap, from, concatMap, of, filter, startWith, catchError } from 'rxjs';
+import {Epic, ofType, StateObservable} from "redux-observable";
 import { useSelector } from "react-redux";
-import { useIsFetching, useQuery } from "react-query";
-import type { AxiosResponse } from "axios";
 
-import { UserDto, randomApi } from "shared/api";
+import { randomApi } from "shared/api";
 import {User} from "./types";
-import {GetUsersPaginatedParams, GetUsersParams} from "../../../shared/api/random-api/users";
+import { GetUsersParams } from "../../../shared/api/random-api/users";
 import {mapUsers} from "../lib/mapUser";
 
 export const initialState: {
     data: User[];
     pages: number,
+    isFetching: boolean
 } = {
     data: [],
-    pages: 1
+    pages: 1,
+    isFetching: false
 };
 
 export const userModel = createSlice({
     name: "users",
     initialState,
     reducers: {
+        setUsersAreFetching: (state, { payload }: PayloadAction<boolean>) => {
+            state.isFetching = payload;
+        },
         setUsersList: (state, { payload }: PayloadAction<User[]>) => {
             state.data = payload;
+            state.isFetching = false;
         },
         loadMoreUsers: (state, { payload }: PayloadAction<User[]>) => {
             state.data = [...state.data, ...payload];
+            state.isFetching = false;
         },
         updateUserRate: (state, { payload }: PayloadAction<{ id: number, modifier: number }>) => {
             const user = state.data.find((el) => el.id === payload.id);
@@ -47,38 +54,38 @@ export const userModel = createSlice({
     },
 });
 
-export const { setUsersList, loadMoreUsers, updateUserRate, unRateUser } = userModel.actions;
+export const getUserEntries = createAction('users:getUserEntries', function prepare(parameters: GetUsersParams) {
+    return {
+        payload: {
+            parameters
+        }
+    }
+})
 
-// react-query actions (everything that async)
+export const { setUsersList, loadMoreUsers, updateUserRate, unRateUser, setUsersAreFetching } = userModel.actions;
 
-const USERS_LIST_QUERY_KEY = "users";
-const MORE_USERS_QUERY_KEY = "more_users";
+// epics
 
-export const getUsersListAsync =
-    (params: GetUsersParams) => (dispatch: Dispatch) =>
-        useQuery<AxiosResponse<UserDto[]>>(
-            USERS_LIST_QUERY_KEY,
-            () => randomApi.users.getUsers(params),
-            {
-                onSuccess: ({ data }) => {
-                    dispatch(userModel.actions.setUsersList(mapUsers(data)));
-                },
-                refetchOnWindowFocus: false,
-            }
-        );
-
-export const loadMoreUsersAsync =
-    (params: GetUsersPaginatedParams) => (dispatch: Dispatch) =>
-        useQuery<AxiosResponse<UserDto[]>>(
-            MORE_USERS_QUERY_KEY,
-            () => randomApi.users.getUsersPaginated(params),
-            {
-                onSuccess: ({ data }) => {
-                    dispatch(userModel.actions.loadMoreUsers(mapUsers(data)));
-                },
-                refetchOnWindowFocus: false,
-            }
-        );
+const getUsersListAsyncObservable: Epic = (action$: Observable<PayloadAction<GetUsersParams>>, state: StateObservable<RootState>) => {
+    return action$.pipe(
+        ofType(getUserEntries.type),
+        filter(() => state.value.users.data.length === 0),
+        switchMap(({ payload: { parameters: { size } } }) => {
+            return from(randomApi.users.getUsers({ size }))
+                .pipe(
+                    concatMap(({ data }) => {
+                        return of(userModel.actions.setUsersList(mapUsers(data)));
+                    }),
+                    catchError(error => of({
+                        type: 'FETCH_USER_REJECTED',
+                        payload: error.xhr.response,
+                        error: true
+                    })),
+                    startWith(userModel.actions.setUsersAreFetching(true))
+                )
+        })
+    );
+};
 
 // selectors
 
@@ -109,8 +116,15 @@ export const useRatedUsers = () =>
         )
     );
 
-export const useIsUsersListLoading = (): boolean =>
-    useIsFetching([USERS_LIST_QUERY_KEY]) > 0;
+export const useIsUsersListLoading = () : boolean =>
+    useSelector(
+        createSelector(
+            (state: RootState) => state.users.isFetching,
+            (
+                isFetching: RootState["users"]["isFetching"]
+            ) => isFetching
+        )
+    );
 
 export const useIsUserListEmpty = (): boolean =>
     useSelector(
@@ -121,3 +135,4 @@ export const useIsUserListEmpty = (): boolean =>
     );
 
 export const reducer = userModel.reducer;
+export const epics = [getUsersListAsyncObservable];
