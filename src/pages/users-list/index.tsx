@@ -1,12 +1,19 @@
 import styles from './styles.module.scss';
 import {isRouteErrorResponse, useRouteError } from "react-router-dom";
+import {Grid} from "@mui/material";
 
 export function Component() {
     return (
         <main className={styles.main}>
-            <div className={styles.description}>
-                This is a users list page
-            </div>
+            <Grid container spacing={2}>
+                <Grid className={styles.card} sm={12} md={6}>
+                    xs=12
+                </Grid>
+                <Grid className={styles.card} sm={12} md={6}>
+                    xs=12
+                </Grid>
+
+            </Grid>
         </main>
     )
 }

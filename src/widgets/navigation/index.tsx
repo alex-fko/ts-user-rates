@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import {NavLink} from "react-router-dom";
@@ -45,7 +44,7 @@ function ResponsiveAppBar() {
                             textDecoration: 'none',
                         }}
                     >
-
+                        RateApp
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -79,7 +78,7 @@ function ResponsiveAppBar() {
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                                    <NavLink to={page.link}>
+                                    <NavLink style={{ color: 'inherit', textDecoration: 'inherit'}} to={page.link}>
                                         <Typography textAlign="center">{page.name}</Typography>
                                     </NavLink>
                                 </MenuItem>
@@ -107,13 +106,13 @@ function ResponsiveAppBar() {
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
-                            <Button
+                            <MenuItem
                                 key={page.name}
                                 onClick={handleCloseNavMenu}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
-                                <NavLink to={page.link}>{page.name}</NavLink>
-                            </Button>
+                                <NavLink style={{ color: 'inherit', textDecoration: 'inherit'}} to={page.link}>{page.name}</NavLink>
+                            </MenuItem>
                         ))}
                     </Box>
                 </Toolbar>
