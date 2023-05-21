@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {CircularProgress, List} from "@mui/material";
-import {User} from "../../entities/user/model/types";
-import {UserRow} from "../../entities/user";
+import {User} from "entities/user/model/types";
+import {UserRow} from "entities/user";
 
 interface UsersListProps {
     rows: User[],
     isFetching: boolean,
-    after?: React.FC<{ user: User}> | null
+    after?: React.FC<{ user: User}> | React.FC<{ user: User}>[] | null
 }
 
 const UsersList = ({ rows, after: After, isFetching } : UsersListProps) => {

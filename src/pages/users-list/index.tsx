@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { userModel } from "entities/user";
 import { UserListActions} from "features/users-list-actions";
 import { RateUserControls } from "features/rate-user/ui";
+import { ResetUserDialog } from "features/reset-user-dialog";
 import UsersList from "widgets/users-list";
 
 import styles from './styles.module.scss';
@@ -25,11 +26,11 @@ export function Component() {
             <Grid container spacing={2} className={styles.container}>
                 <Grid className={styles.UserListColumn} item={true} sm={12} md={6} padding={5}>
                     <h3> Unrated Users </h3>
-                    <UsersList rows={unratedUsers} isFetching={isFetching} after={RateUserControls} />
+                    <UsersList rows={unratedUsers} isFetching={isFetching} after={[RateUserControls]} />
                 </Grid>
                 <Grid className={styles.UserListColumn} item={true} sm={12} md={6} padding={5}>
                     <h3> Rated Users </h3>
-                    <UsersList rows={ratedUsers} isFetching={isFetching} after={RateUserControls} />
+                    <UsersList rows={ratedUsers} isFetching={isFetching} after={[RateUserControls, ResetUserDialog]} />
                 </Grid>
             </Grid>
         </main>

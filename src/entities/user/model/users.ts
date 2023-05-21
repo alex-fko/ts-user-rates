@@ -75,10 +75,10 @@ export const { setUsersList, loadMoreUsers, updateUserRate, resetUserRating, set
 
 // epics
 
-const getUsersListAsyncObservable: Epic = (action$: Observable<PayloadAction<GetUsersParams>>, state: StateObservable<RootState>) => {
+const getUsersListAsyncObservable: Epic = (action$: Observable<PayloadAction<GetUsersParams>>, state$: StateObservable<RootState>) => {
     return action$.pipe(
         ofType(getUserEntries.type),
-        filter(({ payload: { parameters: { overwrite }} }) => state.value.users.data.length === 0 || !!overwrite),
+        filter(({ payload: { parameters: { overwrite }} }) => state$.value.users.data.length === 0 || !!overwrite),
         switchMap(({ payload: { parameters: { size, overwrite } } }) => {
             return from(randomApi.users.getUsers({ size, overwrite }))
                 .pipe(
