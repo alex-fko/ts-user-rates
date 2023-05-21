@@ -3,10 +3,11 @@ import { isRouteErrorResponse, useRouteError } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { userModel } from "entities/user";
-import { UserListActions} from "features/users-list-actions";
+import { UserListActions } from "features/users-list-actions";
 import { RateUserControls } from "features/rate-user/ui";
 import { ResetUserDialog } from "features/reset-user-dialog";
 import UsersList from "widgets/users-list";
+import UserListTabs from "widgets/user-tabs";
 
 import styles from './styles.module.scss';
 
@@ -14,23 +15,31 @@ export function Component() {
     const dispatch = useDispatch();
     const isFetching = userModel.useIsUsersListLoading();
     const unratedUsers = userModel.useUnratedUsers();
-    const ratedUsers = userModel.useRatedUsers();
+    const upVotedUsers = userModel.useUpVotedUsers();
+    const downVotedUsers = userModel.useDownVotedUsers();
 
     useEffect(() => {
-      dispatch(userModel.getUserEntries({ size: 3, overwrite: false }));
+        dispatch(userModel.getUserEntries({size: 3, overwrite: false}));
     }, [dispatch])
 
     return (
         <main className={styles.main}>
-            <UserListActions />
+            <UserListActions/>
             <Grid container spacing={2} className={styles.container}>
                 <Grid className={styles.UserListColumn} item={true} sm={12} md={6} padding={5}>
-                    <h3> Unrated Users </h3>
-                    <UsersList rows={unratedUsers} isFetching={isFetching} after={[RateUserControls]} />
+                    <h3> Users with no rating </h3>
+                    <UsersList rows={unratedUsers} isFetching={isFetching} after={[RateUserControls]}/>
                 </Grid>
                 <Grid className={styles.UserListColumn} item={true} sm={12} md={6} padding={5}>
-                    <h3> Rated Users </h3>
-                    <UsersList rows={ratedUsers} isFetching={isFetching} after={[RateUserControls, ResetUserDialog]} />
+                    <UserListTabs
+                        tabs={['UpVoted', 'DownVoted']}
+                        content={[
+                            <UsersList rows={upVotedUsers} isFetching={isFetching}
+                                       after={[RateUserControls, ResetUserDialog]}/>,
+                            <UsersList rows={downVotedUsers} isFetching={isFetching}
+                                       after={[RateUserControls, ResetUserDialog]}/>,
+                        ]}/>
+
                 </Grid>
             </Grid>
         </main>

@@ -145,6 +145,33 @@ export const useRatedUsers = () =>
         )
     );
 
+export const useUpVotedUsers = () =>
+    useSelector(
+        createSelector(
+            (state: RootState) => state.users.data,
+            (
+                users: RootState["users"]["data"]
+            ) =>
+                Object.values(users).filter(
+                    (user) => user.rating >= 0 && user.isRated
+                )
+        )
+    );
+
+
+export const useDownVotedUsers = () =>
+    useSelector(
+        createSelector(
+            (state: RootState) => state.users.data,
+            (
+                users: RootState["users"]["data"]
+            ) =>
+                Object.values(users).filter(
+                    (user) => user.rating < 0
+                )
+        )
+    );
+
 export const useIsUsersListLoading = () : boolean =>
     useSelector(
         createSelector(

@@ -7,7 +7,8 @@ export function Component() {
     return (
         <main className={styles.main}>
             <div className={styles.description}>
-                This is a users log page
+                TBD. This page will contain list of actions applied to users. Just like it's logged now into
+                console log, but slightly filtered to enlist only relevant actions in readable format.
             </div>
         </main>
     )
