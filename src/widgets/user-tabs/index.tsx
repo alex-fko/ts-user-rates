@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Box, Tab, Tabs, Typography} from "@mui/material";
+import {Box, Tab, Tabs} from "@mui/material";
 import {ReactElement, } from "react";
 
 interface UserListTabsProps {
@@ -27,8 +27,8 @@ function TabPanel(props: TabPanelProps) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                <Box sx={{ p: 2 }}>
+                    {children}
                 </Box>
             )}
         </div>
