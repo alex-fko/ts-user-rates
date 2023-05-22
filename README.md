@@ -1,6 +1,6 @@
 ![Rate App](rate-app.png)
 
-This project is built upon "Feature-Sliced" design, which is an adaptation of DDD for frotend needs.
+This project is built upon "Feature-Sliced" design, which is an adaptation of DDD for frontend needs.
 
 Check out [documentation](https://feature-sliced.design/docs/get-started/overview) for more information.
 
