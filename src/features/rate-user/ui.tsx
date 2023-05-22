@@ -6,7 +6,7 @@ import {User} from "entities/user/model/types";
 
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
 
 import styles from './styles.module.scss'
 
@@ -30,10 +30,18 @@ export const RateUserControls = ({ user }: RateUserProps) => {
 
     return (
         <ButtonGroup color='info' size='small' className={styles.ButtonBlock}>
-            <Button variant="contained" onClick={onRateDown} title="Decrease rating"><RemoveCircleOutlineOutlinedIcon /></Button>
-            <Button variant="contained" onClick={onRateUp} title="Increase rating"><AddCircleOutlineOutlinedIcon /></Button>
+            <Button variant="contained" onClick={onRateDown} title="Decrease rating">
+                <RemoveCircleOutlineOutlinedIcon/>
+            </Button>
+            <Button variant="contained" onClick={onRateUp} title="Increase rating">
+                <AddCircleOutlineOutlinedIcon/>
+            </Button>
             {
-                user.isRated ? <Button variant="contained" onClick={onRateReset} title="Reset rating"><HighlightOffIcon /></Button> : null
+                user.isRated && user.rating === 0
+                    ? (<Button variant="contained" onClick={onRateReset} title="Reset rating">
+                        <ArrowCircleLeftOutlinedIcon/>
+                    </Button>)
+                    : null
             }
 
         </ButtonGroup>
