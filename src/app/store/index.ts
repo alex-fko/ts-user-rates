@@ -1,6 +1,6 @@
 import {configureStore, AnyAction, combineReducers} from "@reduxjs/toolkit";
 import {combineEpics, createEpicMiddleware } from "redux-observable";
-import storage from 'redux-persist/lib/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {persistReducer, persistStore} from 'redux-persist';
 
 import logger from 'redux-logger'
@@ -10,7 +10,7 @@ import { userModel } from "entities/user";
 const persistConfig = {
     key: 'root',
     version: 1,
-    storage,
+    storage: AsyncStorage,
 }
 
 const reducer = combineReducers({
@@ -31,7 +31,12 @@ const epicMiddleware = createEpicMiddleware<AnyAction, AnyAction, MyState>();
 
 export const store = configureStore({
     reducer: persistedReducer,
-    middleware: getDefaultMiddleware => getDefaultMiddleware({thunk: false}).concat(epicMiddleware, logger)
+    middleware: getDefaultMiddleware => getDefaultMiddleware({
+        thunk: false,
+        serializableCheck: {
+            ignoredActions: ['FLUSH', 'REHYDRATE', 'PAUSE', 'PERSIST', 'PURGE', 'REGISTER', 'persist/REHYDRATE'],
+        },
+    }).concat(epicMiddleware, logger)
 });
 
 export const persistor = persistStore(store)

@@ -1,6 +1,10 @@
-# Getting Started with Create React App
+![Rate App](rate-app.png)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
+This project is built upon "Feature-Sliced" design, which is an adaptation of DDD for frotend needs.
+
+Check out [documentation](https://feature-sliced.design/docs/get-started/overview) for more information.
+
+Live demo is available at: [https://alex-fko.github.io/ts-user-rates/](https://alex-fko.github.io/ts-user-rates/)
 
 ## Available Scripts
 
