@@ -34,7 +34,7 @@ export const store = configureStore({
     middleware: getDefaultMiddleware => getDefaultMiddleware({
         thunk: false,
         serializableCheck: {
-            ignoredActions: ['FLUSH', 'REHYDRATE', 'PAUSE', 'PERSIST', 'PURGE', 'REGISTER', 'persist/REHYDRATE'],
+            ignoredActions: ['FLUSH', 'REHYDRATE', 'PAUSE', 'PERSIST', 'PURGE', 'REGISTER', 'persist/REHYDRATE', 'persist/PERSIST'],
         },
     }).concat(epicMiddleware, logger)
 });

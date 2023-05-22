@@ -35,10 +35,12 @@ export const userModel = createSlice({
         },
         setUsersList: (state, { payload }: PayloadAction<User[]>) => {
             state.data = payload;
+            state.pages = 1;
             state.isFetching = false;
         },
         loadMoreUsers: (state, { payload }: PayloadAction<User[]>) => {
             state.data = [...state.data, ...payload];
+            state.pages += 1;
             state.isFetching = false;
         },
         updateUserRate: (state, { payload }: PayloadAction<{ id: number, modifier: number }>) => {
