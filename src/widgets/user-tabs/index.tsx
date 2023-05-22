@@ -5,6 +5,8 @@ import {ReactElement, } from "react";
 interface UserListTabsProps {
     tabs: Array<String>,
     content: ReactElement[]
+    activeTab: number,
+    setActiveTab: (tab: number) => void
 }
 
 interface TabPanelProps {
@@ -33,24 +35,23 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-const UserListTabs = ({ tabs, content } : UserListTabsProps) => {
-    const [value, setValue] = React.useState(0);
+const UserListTabs = ({ tabs, content, activeTab, setActiveTab } : UserListTabsProps) => {
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
+        setActiveTab(newValue);
     };
 
     return (
         <>
             <Box sx={{ width: '100%', typography: 'body1' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Tabs onChange={handleChange} aria-label="lab API tabs example" value={value}>
+                    <Tabs onChange={handleChange} aria-label="lab API tabs example" value={activeTab}>
                         {
                             tabs.map((el, idx) => <Tab key={idx} value={idx} label={el} />)
                         }
                     </Tabs>
                 </Box>
-                { content.map((el, idx) => <TabPanel index={idx} key={idx} value={value}>{el}</TabPanel>)}
+                { content.map((el, idx) => <TabPanel index={idx} key={idx} value={activeTab}>{el}</TabPanel>)}
             </Box>
         </>
     );

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { isRouteErrorResponse, useRouteError } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { useDispatch } from "react-redux";
@@ -13,14 +13,20 @@ import styles from './styles.module.scss';
 
 export function Component() {
     const dispatch = useDispatch();
+    const [activeTab, setActiveTab] = useState(0);
     const isFetching = userModel.useIsUsersListLoading();
     const unratedUsers = userModel.useUnratedUsers();
     const upVotedUsers = userModel.useUpVotedUsers();
     const downVotedUsers = userModel.useDownVotedUsers();
+    const lastRatingChange = userModel.useLastRatingChange();
 
     useEffect(() => {
         dispatch(userModel.getUserEntries({size: 3, overwrite: false}));
     }, [dispatch])
+
+    useEffect(() => {
+        setActiveTab(lastRatingChange >= 0 ? 0 : 1)
+    }, [lastRatingChange]);
 
     return (
         <main className={styles.main}>
@@ -32,6 +38,8 @@ export function Component() {
                 </Grid>
                 <Grid className={styles.UserListColumn} item={true} sm={12} md={6} padding={5}>
                     <UserListTabs
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
                         tabs={['UpVoted', 'DownVoted']}
                         content={[
                             <UsersList rows={upVotedUsers} isFetching={isFetching}

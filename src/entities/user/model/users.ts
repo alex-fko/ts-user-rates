@@ -17,11 +17,13 @@ import {AxiosPromise} from "axios";
 export const initialState: {
     data: User[];
     pages: number,
-    isFetching: boolean
+    isFetching: boolean,
+    lastRatingUpdate: number
 } = {
     data: [],
     pages: 1,
-    isFetching: false
+    isFetching: false,
+    lastRatingUpdate: 0
 };
 
 export const userModel = createSlice({
@@ -52,6 +54,9 @@ export const userModel = createSlice({
                 user.rating = 0;
                 user.isRated = false;
             }
+        },
+        setLastRatingChange: (state, { payload } : PayloadAction<number>) => {
+            state.lastRatingUpdate = payload;
         }
     },
 });
@@ -72,7 +77,7 @@ export const getMoreUsers = createAction('users/getMoreUsers', function prepare(
     }
 })
 
-export const { setUsersList, loadMoreUsers, updateUserRate, resetUserRating, setUsersAreFetching } = userModel.actions;
+export const { setUsersList, loadMoreUsers, updateUserRate, resetUserRating, setUsersAreFetching, setLastRatingChange } = userModel.actions;
 
 // epics
 
@@ -190,6 +195,16 @@ export const useIsUserListEmpty = (): boolean =>
             (users) => Object.keys(users).length === 0
         )
     );
+
+export const useLastRatingChange = (): number =>
+    useSelector(
+        createSelector(
+            (state: RootState) => state.users.lastRatingUpdate,
+            (lastRatingUpdate) => lastRatingUpdate
+        )
+    );
+
+
 
 export const reducer = userModel.reducer;
 export const epics = [getUsersListAsyncObservable, getMoreUsersObservable];

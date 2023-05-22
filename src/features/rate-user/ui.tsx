@@ -1,7 +1,7 @@
 import {useCallback} from "react";
 import {Button, ButtonGroup } from "@mui/material";
 import { useDispatch } from "react-redux";
-import {resetUserRating, updateUserRate} from "entities/user/model";
+import {resetUserRating, setLastRatingChange, updateUserRate} from "entities/user/model";
 import {User} from "entities/user/model/types";
 
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
@@ -18,11 +18,13 @@ export const RateUserControls = ({ user }: RateUserProps) => {
     const dispatch = useDispatch();
     const onRateUp = useCallback(() => {
         dispatch(updateUserRate({ id: user.id, modifier: +1 }))
-    }, [dispatch, user.id]);
+        dispatch(setLastRatingChange(user.rating + 1))
+    }, [dispatch, user.id, user.rating]);
 
     const onRateDown = useCallback(() => {
         dispatch(updateUserRate({ id: user.id, modifier: -1 }))
-    }, [dispatch, user.id]);
+        dispatch(setLastRatingChange(user.rating - 1))
+    }, [dispatch, user.id, user.rating]);
 
     const onRateReset = useCallback(() => {
         dispatch(resetUserRating({ id: user.id }))
