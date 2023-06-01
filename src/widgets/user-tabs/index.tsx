@@ -2,6 +2,10 @@ import * as React from 'react';
 import {Box, Tab, Tabs} from "@mui/material";
 import {ReactElement, } from "react";
 
+// @ts-ignore
+const Offscreen = React.unstable_Offscreen;
+
+
 interface UserListTabsProps {
     tabs: Array<String>,
     content: ReactElement[]
@@ -26,11 +30,11 @@ function TabPanel(props: TabPanelProps) {
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && (
-                <Box sx={{ p: 2 }}>
+            <Offscreen mode={value !== index ? "hidden" : "visible"}>
+                <Box component="div" sx={{ p: 2 }}>
                     {children}
                 </Box>
-            )}
+            </Offscreen>
         </div>
     );
 }
@@ -43,8 +47,8 @@ const UserListTabs = ({ tabs, content, activeTab, setActiveTab } : UserListTabsP
 
     return (
         <>
-            <Box sx={{ width: '100%', typography: 'body1' }}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Box component="div" sx={{ width: '100%', typography: 'body1' }}>
+                <Box component="div" sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs onChange={handleChange} aria-label="lab API tabs example" value={activeTab}>
                         {
                             tabs.map((el, idx) => <Tab key={idx} value={idx} label={el} />)
