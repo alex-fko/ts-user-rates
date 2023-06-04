@@ -12,6 +12,8 @@ interface ResetUserDialogProps {
 
 export const ResetUserDialog = ({ user }: ResetUserDialogProps) => {
     const dispatch = useDispatch();
+    // @todo global store can be used to keep this state too.
+    // @todo Move isRewardOpen & isBanOpen to the store instead of using local state.
     const [isRewardOpen, setIsRewardOpen] = useState(false);
     const [isBanOpen, setIsBanOpen] = useState(false);
 

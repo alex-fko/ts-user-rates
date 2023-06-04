@@ -2,9 +2,6 @@ import * as React from 'react';
 import {Box, Tab, Tabs} from "@mui/material";
 import {ReactElement, } from "react";
 
-// @ts-ignore
-const Offscreen = React.unstable_Offscreen;
-
 
 interface UserListTabsProps {
     tabs: Array<String>,
@@ -30,11 +27,9 @@ function TabPanel(props: TabPanelProps) {
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            <Offscreen mode={value !== index ? "hidden" : "visible"}>
-                <Box component="div" sx={{ p: 2 }}>
-                    {children}
-                </Box>
-            </Offscreen>
+            <Box component="div" sx={{ p: 2 }}>
+                {children}
+            </Box>
         </div>
     );
 }
