@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import {randomApi, UserDto} from "shared/api";
 import {User} from "./types";
 import {GetUsersPaginatedParams, GetUsersParams} from "../../../shared/api/random-api/users";
-import {mapUsers} from "../lib/mapUser";
+import {mapUsers} from "../lib";
 import {AxiosPromise} from "axios";
 
 export const initialState: {
@@ -26,7 +26,7 @@ export const initialState: {
     lastRatingUpdate: 0
 };
 
-export const userModel = createSlice({
+const userSlice = createSlice({
     name: "users",
     initialState,
     reducers: {
@@ -79,7 +79,7 @@ export const getMoreUsers = createAction('users/getMoreUsers', function prepare(
     }
 })
 
-export const { setUsersList, loadMoreUsers, updateUserRate, resetUserRating, setUsersAreFetching, setLastRatingChange } = userModel.actions;
+export const actions = userSlice.actions;
 
 // epics
 
@@ -91,14 +91,14 @@ export const getUsersListAsyncObservable: Epic = (action$: Observable<PayloadAct
             return from((callback ?? randomApi.users.getUsers)({ size, overwrite }))
                 .pipe(
                     concatMap(({ data }) => {
-                        return of(userModel.actions.setUsersList(mapUsers(data)));
+                        return of(userSlice.actions.setUsersList(mapUsers(data)));
                     }),
                     catchError(error => of({
                         type: 'FETCH_USER_REJECTED',
                         payload: error.xhr.response,
                         error: true
                     })),
-                    startWith(userModel.actions.setUsersAreFetching(true))
+                    startWith(userSlice.actions.setUsersAreFetching(true))
                 )
         })
     );
@@ -111,14 +111,14 @@ export const getMoreUsersObservable: Epic = (action$: Observable<PayloadAction<G
             return from(randomApi.users.getUsersPaginated({ size, page: state$.value.users.pages + 1 }))
                 .pipe(
                     concatMap(({ data }) => {
-                        return of(userModel.actions.loadMoreUsers(mapUsers(data)));
+                        return of(userSlice.actions.loadMoreUsers(mapUsers(data)));
                     }),
                     catchError(error => of({
                         type: 'FETCH_USER_REJECTED',
                         payload: error.xhr.response,
                         error: true
                     })),
-                    startWith(userModel.actions.setUsersAreFetching(true))
+                    startWith(userSlice.actions.setUsersAreFetching(true))
                 )
         })
     );
@@ -208,5 +208,5 @@ export const useLastRatingChange = (): number =>
 
 
 
-export const reducer = userModel.reducer;
+export const reducer = userSlice.reducer;
 export const epics = [getUsersListAsyncObservable, getMoreUsersObservable];

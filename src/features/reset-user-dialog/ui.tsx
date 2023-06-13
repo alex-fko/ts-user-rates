@@ -1,13 +1,12 @@
 import {useCallback, useEffect, useState} from "react";
 import {Button, Dialog} from "@mui/material";
 import { useDispatch } from "react-redux";
-import { resetUserRating } from "entities/user/model";
-import {User} from "entities/user/model/types";
+import { userTypes, userModel } from "entities/user";
 
 import styles from './styles.module.scss'
 
 interface ResetUserDialogProps {
-    user: User
+    user: userTypes.User
 }
 
 export const ResetUserDialog = ({ user }: ResetUserDialogProps) => {
@@ -34,7 +33,7 @@ export const ResetUserDialog = ({ user }: ResetUserDialogProps) => {
     }, []);
 
     const handleReset = useCallback(() => {
-        dispatch(resetUserRating({ id: user.id }))
+        dispatch(userModel.actions.resetUserRating({ id: user.id }))
     }, [dispatch, user.id])
 
     return (
